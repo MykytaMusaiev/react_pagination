@@ -1,30 +1,39 @@
 import React from 'react';
 import cn from 'classnames';
+import { getNumbers } from '../../utils';
 
 interface Props {
   total: number;
-  currentPage: number;
   perPage: number;
+  currentPage?: number;
   onPageChange: (page: number) => void;
 }
 
 export const Pagination: React.FC<Props> = ({
   total,
-  currentPage,
   perPage,
+  currentPage = 1,
   onPageChange,
 }) => {
-  const totalPages: number = Math.ceil(total / perPage);
+  const totalPages = Math.ceil(total / perPage);
+  const pages = getNumbers(1, totalPages);
 
-  const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+  const handlePageClick = (e: React.MouseEvent, page: number) => {
+    e.preventDefault();
+    if (page !== currentPage) {
+      onPageChange(page);
+    }
+  };
 
-  const handlePrev = () => {
+  const handlePrev = (e: React.MouseEvent) => {
+    e.preventDefault();
     if (currentPage > 1) {
       onPageChange(currentPage - 1);
     }
   };
 
-  const handleNext = () => {
+  const handleNext = (e: React.MouseEvent) => {
+    e.preventDefault();
     if (currentPage < totalPages) {
       onPageChange(currentPage + 1);
     }
@@ -53,7 +62,7 @@ export const Pagination: React.FC<Props> = ({
             data-cy="pageLink"
             className="page-link"
             href={`#${page}`}
-            onClick={() => onPageChange(page)}
+            onClick={e => handlePageClick(e, page)}
           >
             {page}
           </a>
