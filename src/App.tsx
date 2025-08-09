@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import './App.css';
 import { getNumbers } from './utils';
@@ -13,21 +13,27 @@ export const App: React.FC = () => {
   const currentPage = Number(searchParams.get('page')) || 1;
   const perPage = Number(searchParams.get('perPage')) || 5;
 
-  const handlePageChange = (page: number) => {
-    const params = new URLSearchParams(searchParams);
+  const handlePageChange = useCallback(
+    (page: number) => {
+      const params = new URLSearchParams(searchParams);
 
-    params.set('page', String(page));
-    setSearchParams(params);
-  };
+      params.set('page', String(page));
+      setSearchParams(params);
+    },
+    [searchParams, setSearchParams],
+  );
 
-  const handlePerPageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const newPerPage = event.target.value;
-    const params = new URLSearchParams(searchParams);
+  const handlePerPageChange = useCallback(
+    (event: React.ChangeEvent<HTMLSelectElement>) => {
+      const newPerPage = event.target.value;
+      const params = new URLSearchParams(searchParams);
 
-    params.set('perPage', newPerPage);
-    params.set('page', '1');
-    setSearchParams(params);
-  };
+      params.set('perPage', newPerPage);
+      params.set('page', '1');
+      setSearchParams(params);
+    },
+    [searchParams, setSearchParams],
+  );
 
   const firstItemIndex = (currentPage - 1) * perPage;
   const lastItemIndex = Math.min(firstItemIndex + perPage, items.length);
@@ -44,6 +50,7 @@ export const App: React.FC = () => {
       <div className="form-group row">
         <div className="col-3 col-sm-2 col-xl-1">
           <select
+            id="perPageSelector"
             data-cy="perPageSelector"
             className="form-control"
             onChange={handlePerPageChange}

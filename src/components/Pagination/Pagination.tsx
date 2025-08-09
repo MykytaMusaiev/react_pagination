@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import cn from 'classnames';
 import { getNumbers } from '../../utils';
 
@@ -18,26 +18,35 @@ export const Pagination: React.FC<Props> = ({
   const totalPages = Math.ceil(total / perPage);
   const pages = getNumbers(1, totalPages);
 
-  const handlePageClick = (e: React.MouseEvent, page: number) => {
-    e.preventDefault();
-    if (page !== currentPage) {
-      onPageChange(page);
-    }
-  };
+  const handlePageClick = useCallback(
+    (e: React.MouseEvent, page: number) => {
+      e.preventDefault();
+      if (page !== currentPage) {
+        onPageChange(page);
+      }
+    },
+    [currentPage, onPageChange],
+  );
 
-  const handlePrev = (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (currentPage > 1) {
-      onPageChange(currentPage - 1);
-    }
-  };
+  const handlePrev = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      if (currentPage > 1) {
+        onPageChange(currentPage - 1);
+      }
+    },
+    [currentPage, onPageChange],
+  );
 
-  const handleNext = (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (currentPage < totalPages) {
-      onPageChange(currentPage + 1);
-    }
-  };
+  const handleNext = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      if (currentPage < totalPages) {
+        onPageChange(currentPage + 1);
+      }
+    },
+    [currentPage, totalPages, onPageChange],
+  );
 
   return (
     <ul className="pagination">
@@ -47,6 +56,7 @@ export const Pagination: React.FC<Props> = ({
           className="page-link"
           href="#prev"
           aria-disabled={currentPage === 1}
+          aria-label="Go to previous page"
           onClick={handlePrev}
         >
           «
@@ -62,6 +72,7 @@ export const Pagination: React.FC<Props> = ({
             data-cy="pageLink"
             className="page-link"
             href={`#${page}`}
+            aria-label={`Go to page ${page}`}
             onClick={e => handlePageClick(e, page)}
           >
             {page}
@@ -75,6 +86,7 @@ export const Pagination: React.FC<Props> = ({
           className="page-link"
           href="#next"
           aria-disabled={currentPage === totalPages}
+          aria-label="Go to next page"
           onClick={handleNext}
         >
           »
